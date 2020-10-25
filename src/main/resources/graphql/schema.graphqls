@@ -1,0 +1,127 @@
+type User {
+    id: ID!
+    name: String!
+    email: String
+    password: String
+}
+
+input AuthData {
+    email: String!
+    password: String!
+}
+
+type SigninPayload {
+    token: String
+    user: User
+}
+
+type Seller {
+    id: ID!
+    user: User
+    name: String!
+    logo: String
+    description: String
+    type: String
+    location: Location
+    dateCreated:String
+    dateUpdated:String
+    inTrash:Boolean
+}
+
+type Make{
+    id:ID!
+    name:String
+    description:String
+    logo:String
+    dateCreated:String
+    dateUpdated:String
+    inTrash:Boolean
+}
+
+type Model {
+    id: ID!
+    make: ID
+    name: String!
+    description: String
+    dateCreated: String
+    dateUpdated: String
+}
+
+type ModelVariant {
+    id: ID!
+    model: ID!
+    name: String
+    description: String
+    dateCreated: String
+    dateUpdated: String
+}
+
+type Car {
+    id: ID!
+    type: String #Used/New
+    name: String!
+    year: String
+    mileage: String
+    color: Color
+    engine: Engine
+    bodyStyle: String
+    description: String
+    price: String
+    currency: String
+    negotiable: Boolean
+    finance: Boolean
+    seller: Seller
+    features: Feature
+}
+
+type Feature {
+    driverConvinience: [String]
+    safety: [String]
+    exterior: [String]
+    interior: [String]
+    technical: [String]
+    dimension: [String]
+}
+
+type Engine {
+    fuel: String
+    size: String
+    torque: String
+    bhp: String
+    driveTrain: String
+    transmission: String
+    description: String
+}
+
+type Color {
+    interior: String
+    exterior: String
+}
+
+type Location {
+    name: String
+    location: GeoJSON
+}
+
+type GeoJSON {
+    type: String! #Point
+    coordinates: [String]
+}
+
+type Query{
+    listMakes:[Make]
+    findMakeById(id:ID):Make
+#    listModels:[Model]
+#    findModelById(id:ID):Model
+    listUsers:[User]
+    findUserById(id:ID):User
+    findUserByEmail(email:String):User
+}
+
+type Mutation{
+    createUser(name: String!, authProvider: AuthData!): User
+    signinUser(auth: AuthData): SigninPayload
+    addMake(name:String, description:String):Make
+    addModel(name: String, description: String, makeId: ID): Model
+    addModelVariant(modelId: ID, name: String, description: String): ModelVariant
+}

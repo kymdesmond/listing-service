@@ -1,0 +1,51 @@
+version: '3.8'
+services:
+  listing-service:
+    image: listing-service:0.0.1-SNAPSHOT
+    build:
+      dockerfile: Dockerfile
+      context: ./
+    ports:
+      - 8080:8098
+    depends_on:
+      - listing-database
+      - axonserver
+    networks:
+      listing-network:
+        aliases:
+          - listing-service
+    restart: always
+    environment:
+      - SPRING_DATA_MONGODB_HOST=listing-database
+      - SPRING_DATA_MONGODB_PORT=27017
+      - SPRING_DATA_MONGODB_DATABASE=cars
+      - AXON_AXONSERVER_SERVERS=axonserver
+    expose:
+      - 8080
+    command: mvn clean spring-boot:run
+  axonserver:
+    image: axoniq/axonserver
+    hostname: axonserver
+    ports:
+      - '8024:8024'
+      - '8124:8124'
+      - '8224:8224'
+    networks:
+      listing-network:
+        aliases:
+          - axonserver
+  listing-database:
+    image: mongo
+    restart: always
+    networks:
+      listing-network:
+        aliases:
+          - listing-database
+    environment:
+      - MONGO_DATA_DIR=/data/db
+      - MONGO_LOG_DIR=/dev/null
+    ports:
+      - 27017:27017
+    command: mongod --logpath=/dev/null # --quiet
+networks:
+  listing-network:
